@@ -1,1 +1,565 @@
-# Songsforyouu
+index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Our Songs ♡</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0a1a;
+    --page-bg: #13102a;
+    --accent1: #7c5cbf;
+    --accent2: #a78bfa;
+    --accent3: #c4b5fd;
+    --pink: #e879f9;
+    --text: #ede9fe;
+    --muted: #a094c7;
+    --glow: rgba(167, 139, 250, 0.25);
+  }
+
+  body {
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .stars {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(124,92,191,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 70%, rgba(232,121,249,0.1) 0%, transparent 50%);
+  }
+  .stars::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 70% 35%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 15%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 75%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 10% 85%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 55%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 45%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 65% 90%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 38% 78%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 72% 52%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 5% 50%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 95% 80%, rgba(255,255,255,0.4) 0%, transparent 100%);
+  }
+
+  .floating-hearts {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  }
+  .fh {
+    position: absolute;
+    font-size: 1rem;
+    opacity: 0;
+    animation: floatUp 8s ease-in infinite;
+  }
+  .fh:nth-child(1) { left: 10%; animation-delay: 0s; font-size: 0.8rem; }
+  .fh:nth-child(2) { left: 25%; animation-delay: 1.5s; font-size: 1.2rem; }
+  .fh:nth-child(3) { left: 50%; animation-delay: 3s; font-size: 0.7rem; }
+  .fh:nth-child(4) { left: 70%; animation-delay: 0.8s; font-size: 1rem; }
+  .fh:nth-child(5) { left: 85%; animation-delay: 2.2s; font-size: 0.9rem; }
+  .fh:nth-child(6) { left: 40%; animation-delay: 4s; font-size: 0.6rem; }
+
+  @keyframes floatUp {
+    0% { bottom: -10%; opacity: 0; transform: translateX(0) rotate(0deg); }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.3; }
+    100% { bottom: 110%; opacity: 0; transform: translateX(20px) rotate(20deg); }
+  }
+
+  /* INTRO SLIDES */
+  .intro-stage {
+    position: relative; z-index: 2;
+    width: min(90vw, 480px);
+    text-align: center;
+  }
+
+  .intro-slide {
+    display: none;
+    padding: 2rem 1.5rem;
+  }
+  .intro-slide.active { display: block; animation: fadeUp 0.7s cubic-bezier(.22,.68,0,1.2) both; }
+
+  .slide-emoji {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 1.2rem;
+  }
+  .beat { animation: heartbeat 1.2s ease-in-out infinite; }
+  .spin { animation: spinPop 3s ease-in-out infinite; }
+  .floatb { animation: floatBob 2.5s ease-in-out infinite; }
+  .wiggle { animation: wiggleAnim 2s ease-in-out infinite; }
+
+  .slide-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 6vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.8rem;
+  }
+  .grad {
+    background: linear-gradient(135deg, var(--accent3), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .slide-sub {
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 1.8rem;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+  }
+  .tags {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    justify-content: center; margin-bottom: 1.5rem;
+  }
+  .tag {
+    background: rgba(124,92,191,0.2);
+    border: 1px solid rgba(167,139,250,0.3);
+    border-radius: 50px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.8rem;
+    color: var(--accent3);
+  }
+  .progress-dots {
+    display: flex; gap: 0.5rem; justify-content: center;
+    margin-top: 1.5rem;
+  }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(167,139,250,0.3);
+    transition: all 0.3s ease;
+  }
+  .dot.active {
+    background: var(--accent2);
+    width: 20px; border-radius: 3px;
+    box-shadow: 0 0 8px var(--accent2);
+  }
+  .timer-bar-wrap {
+    width: 100%; height: 2px;
+    background: rgba(167,139,250,0.15);
+    border-radius: 2px;
+    margin-top: 1.2rem;
+    overflow: hidden;
+  }
+  .timer-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent1), var(--pink));
+    border-radius: 2px;
+    width: 100%;
+    transform-origin: left;
+  }
+  .tap-hint {
+    font-size: 0.72rem;
+    color: rgba(160,148,199,0.5);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 0.6rem;
+  }
+
+  /* COVER */
+  .cover {
+    display: none;
+    position: relative; z-index: 2;
+    text-align: center;
+    padding: 3rem 2rem;
+    animation: fadeUp 1s ease both;
+    width: min(90vw, 480px);
+  }
+  .cover-heart {
+    font-size: 3.5rem;
+    animation: heartbeat 1.2s ease-in-out infinite;
+    display: block;
+    margin-bottom: 1rem;
+  }
+  .cover h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 7vw, 4rem);
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent3), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 0.75rem;
+  }
+  .cover p {
+    font-size: 1.05rem;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 2.5rem;
+    font-family: 'Playfair Display', serif;
+  }
+  .open-btn {
+    background: linear-gradient(135deg, var(--accent1), var(--pink));
+    color: white;
+    border: none;
+    padding: 0.85rem 2.5rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    box-shadow: 0 0 30px var(--glow), 0 4px 20px rgba(0,0,0,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .open-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 0 50px rgba(167,139,250,0.4), 0 8px 30px rgba(0,0,0,0.5);
+  }
+
+  /* BOOK */
+  .book-container {
+    display: none;
+    position: relative; z-index: 2;
+    width: min(90vw, 520px);
+    animation: fadeUp 0.6s ease both;
+    cursor: default;
+  }
+  .page {
+    display: none;
+    background: var(--page-bg);
+    border-radius: 20px;
+    border: 1px solid rgba(167,139,250,0.2);
+    box-shadow: 0 0 60px rgba(124,92,191,0.2), 0 20px 60px rgba(0,0,0,0.6);
+    padding: 2.5rem 2rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .page.active { display: block; animation: slideIn 0.35s ease both; }
+  .page::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,121,249,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .page-number {
+    position: absolute; top: 1.2rem; right: 1.5rem;
+    font-size: 0.75rem; color: var(--muted);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .song-number {
+    font-size: 0.7rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem;
+  }
+  .song-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 700; color: var(--text);
+    line-height: 1.2; margin-bottom: 0.3rem;
+  }
+  .song-artist { font-size: 0.9rem; color: var(--muted); margin-bottom: 1.5rem; font-style: italic; }
+  .divider {
+    width: 50px; height: 2px;
+    background: linear-gradient(90deg, var(--accent1), var(--pink));
+    border-radius: 2px; margin-bottom: 1.5rem;
+  }
+  .why-label { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem; }
+  .why-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; color: var(--muted); font-style: italic;
+    line-height: 1.7; margin-bottom: 1.8rem;
+    padding: 1rem 1.2rem;
+    background: rgba(124,92,191,0.1);
+    border-left: 3px solid var(--accent1);
+    border-radius: 0 10px 10px 0;
+  }
+  .audio-section { margin-bottom: 1.5rem; }
+  .audio-label { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.75rem; }
+  .audio-upload-area {
+    border: 1.5px dashed rgba(167,139,250,0.4);
+    border-radius: 12px; padding: 1.2rem;
+    text-align: center; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+  }
+  .audio-upload-area:hover { border-color: var(--accent2); background: rgba(124,92,191,0.08); }
+  .audio-upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .audio-upload-icon { font-size: 1.5rem; margin-bottom: 0.3rem; }
+  .audio-upload-text { font-size: 0.85rem; color: var(--muted); }
+  .nav { display: flex; align-items: center; justify-content: space-between; margin-top: 1.5rem; gap: 1rem; }
+  .nav-btn {
+    background: rgba(124,92,191,0.2);
+    border: 1px solid rgba(167,139,250,0.3);
+    color: var(--accent3); padding: 0.6rem 1.4rem;
+    border-radius: 50px; font-size: 0.85rem;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer; transition: background 0.2s, transform 0.2s;
+  }
+  .nav-btn:hover:not(:disabled) { background: rgba(124,92,191,0.4); transform: translateY(-1px); }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .page-indicator { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.1em; }
+  .add-song-btn {
+    width: 100%; margin-top: 1rem; padding: 0.75rem;
+    background: transparent; border: 1.5px dashed rgba(167,139,250,0.3);
+    border-radius: 12px; color: var(--muted); font-size: 0.85rem;
+    font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  }
+  .add-song-btn:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(124,92,191,0.08); }
+  .edit-icon {
+    position: absolute; top: 1.2rem; left: 1.5rem;
+    font-size: 0.9rem; cursor: pointer;
+    color: rgba(167,139,250,0.4); transition: color 0.2s;
+  }
+  .edit-icon:hover { color: var(--accent2); }
+
+  /* Modal */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 10;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #1a1535; border: 1px solid rgba(167,139,250,0.3);
+    border-radius: 20px; padding: 2rem; width: min(90vw, 460px);
+    box-shadow: 0 0 60px rgba(124,92,191,0.3); animation: fadeUp 0.3s ease;
+  }
+  .modal h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 1.5rem; color: var(--accent3); }
+  .modal label { display: block; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.4rem; margin-top: 1rem; }
+  .modal input, .modal textarea {
+    width: 100%; background: rgba(124,92,191,0.1);
+    border: 1px solid rgba(167,139,250,0.25); border-radius: 10px;
+    padding: 0.7rem 1rem; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+    outline: none; transition: border-color 0.2s;
+  }
+  .modal input:focus, .modal textarea:focus { border-color: var(--accent2); }
+  .modal textarea { resize: vertical; min-height: 80px; }
+  .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: flex-end; }
+  .btn-cancel {
+    padding: 0.6rem 1.4rem; background: transparent;
+    border: 1px solid rgba(167,139,250,0.3); border-radius: 50px;
+    color: var(--muted); font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-cancel:hover { border-color: var(--muted); color: var(--text); }
+  .btn-save {
+    padding: 0.6rem 1.6rem;
+    background: linear-gradient(135deg, var(--accent1), var(--pink));
+    border: none; border-radius: 50px; color: white;
+    font-family: 'DM Sans', sans-serif; font-weight: 500;
+    cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-save:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(232,121,249,0.3); }
+
+  /* Keyframes */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-20px); }
+  }
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    14% { transform: scale(1.2); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.15); }
+    70% { transform: scale(1); }
+  }
+  @keyframes wiggleAnim {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+  }
+  @keyframes spinPop {
+    0%, 80%, 100% { transform: rotate(0deg) scale(1); }
+    90% { transform: rotate(15deg) scale(1.15); }
+  }
+  @keyframes floatBob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes shrink {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars"></div>
+<div class="floating-hearts">
+  <span class="fh">💜</span><span class="fh">🌸</span><span class="fh">✨</span>
+  <span class="fh">💫</span><span class="fh">🌙</span><span class="fh">💜</span>
+</div>
+
+<!-- INTRO SLIDES -->
+<div class="intro-stage" id="introStage">
+
+  <div class="intro-slide active" id="slide-0">
+    <span class="slide-emoji beat">💌</span>
+    <div class="slide-heading"><span class="grad">Hey, you.</span></div>
+    <div class="slide-sub">Yes, you. The one who makes my heart do silly little things.</div>
+    <div class="tags">
+      <span class="tag">🌙 made with love</span>
+      <span class="tag">✨ just for you</span>
+    </div>
+    <div class="timer-bar-wrap"><div class="timer-bar" id="bar-0"></div></div>
+    <div class="tap-hint">tap anywhere or wait</div>
+  </div>
+
+  <div class="intro-slide" id="slide-1">
+    <span class="slide-emoji floatb">🎵</span>
+    <div class="slide-heading">There are songs that<br/><span class="grad">live in my chest.</span></div>
+    <div class="slide-sub">Songs I can't hear without thinking of you. Every. Single. Time.</div>
+    <div class="tags">
+      <span class="tag">🎧 heard on repeat</span>
+      <span class="tag">💭 thought of you</span>
+    </div>
+    <div class="timer-bar-wrap"><div class="timer-bar" id="bar-1"></div></div>
+    <div class="tap-hint">tap anywhere or wait</div>
+  </div>
+
+  <div class="intro-slide" id="slide-2">
+    <span class="slide-emoji spin">🎁</span>
+    <div class="slide-heading"><span class="grad">So I made you</span><br/>something.</div>
+    <div class="slide-sub">A little book. A little voice. A lot of feelings I didn't know how else to say.</div>
+    <div class="tags">
+      <span class="tag">📖 pages of us</span>
+      <span class="tag">🎤 my voice</span>
+      <span class="tag">💜 my heart</span>
+    </div>
+    <div class="timer-bar-wrap"><div class="timer-bar" id="bar-2"></div></div>
+    <div class="tap-hint">tap anywhere or wait</div>
+  </div>
+
+  <div class="intro-slide" id="slide-3">
+    <span class="slide-emoji beat">🌸</span>
+    <div class="slide-heading">Are you <span class="grad">ready?</span></div>
+    <div class="slide-sub">This is our playlist. Our story.<br/>Tap to open it. ♡</div>
+    <div class="progress-dots" id="progressDots"></div>
+    <div class="timer-bar-wrap"><div class="timer-bar" id="bar-3"></div></div>
+    <div class="tap-hint">tap to open your gift</div>
+  </div>
+
+</div>
+
+<!-- COVER -->
+<div class="cover" id="cover">
+  <span class="cover-heart">💜</span>
+  <h1>Songs That<br/>Remind Me of You</h1>
+  <p>A little book made with all my love</p>
+  <button class="open-btn" id="openBookBtn">Open Our Songbook ♡</button>
+</div>
+
+<!-- BOOK -->
+<div class="book-container" id="bookContainer">
+  <div id="pagesContainer"></div>
+  <button class="add-song-btn" id="addSongBtn">
+    <span>＋</span> Add another song
+  </button>
+  <div class="nav">
+    <button class="nav-btn" id="prevBtn">← Prev</button>
+    <span class="page-indicator" id="pageIndicator">1 / 1</span>
+    <button class="nav-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>Edit Song ✦</h3>
+    <label>Song Title</label>
+    <input type="text" id="inputTitle" placeholder="e.g. Perfect" />
+    <label>Artist</label>
+    <input type="text" id="inputArtist" placeholder="e.g. Ed Sheeran" />
+    <label>Why it suits you two</label>
+    <textarea id="inputWhy" placeholder="Write something sweet..."></textarea>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelBtn">Cancel</button>
+      <button class="btn-save" id="saveBtn">Save ♡</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const TOTAL_SLIDES = 4;
+  const SLIDE_DURATION = 4000;
+  let currentSlide = 0;
+  let slideTimer = null;
+  let isTransitioning = false;
+  let introActive = true;
+
+  function buildDots() {
+    const dots = document.getElementById('progressDots');
+    if (!dots) return;
+    dots.innerHTML = '';
+    for (let i = 0; i < TOTAL_SLIDES; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === currentSlide ? ' active' : '');
+      dots.appendChild(d);
+    }
+  }
+
+  function restartBar(index) {
+    const bar = document.getElementById('bar-' + index);
+    if (!bar) return;
+    bar.style.animation = 'none';
+    void bar.offsetHeight;
+    bar.style.animation = `shrink ${SLIDE_DURATION}ms linear forwards`;
+  }
+
+  function goToSlide(index) {
+    if (isTransitioning) return;
+    isTransitioning = true;
+    clearTimeout(slideTimer);
+
+    const current = document.getElementById('slide-' + currentSlide);
+    if (current) {
+      current.style.animation = 'fadeOut 0.4s ease forwards';
+    }
+
+    setTimeout(() => {
+      if (current) {
+        current.classList.remove('active');
+        current.style.animation = '';
+      }
+
+      if (index >= TOTAL_SLIDES) {
+        introActive = false;
+        document.getElementById('introStage').style.display = 'none';
+        document.getElementById('cover').style.display = 'block';
+        isTransitioning = false;
+        return;
+      }
+
+      currentSlide = index;
+      const next = document.getElementById('slide-' + currentSlide);
+      if (next) {
+        next.classList.add('active');
+        next.style.animation = 'fadeUp 0.7s cubic-bezier(.22,.68,0,1.2) both';
+      }
+      buildDots();
+      restartBar(currentSlide);
+      isTransitioning = false;
+      slideTimer = setTimeout(() => goToSlide(currentSlide + 1), SLIDE_DURATION);
+      
